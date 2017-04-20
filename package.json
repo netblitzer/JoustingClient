@@ -1,0 +1,42 @@
+{
+  "name": "joustingclient",
+  "version": "1.0.0",
+  "description": "A 2D Electon game rendered using PIXI.js",
+  "main": "./src/main.js",
+  "dependencies": {
+    "pixi.js": "^4.5.0",
+    "socket.io": "^1.4.8"
+  },
+  "devDependencies": {
+    "electron": "^1.6.5",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "^9.0.1",
+    "eslint-plugin-import": "^1.10.1",
+    "nodemon": "^1.11.0"
+  },
+  "scripts": {
+    "nodemon": "nodemon --watch ./src ./src/main.js",
+    "pretest": "eslint ./src --fix",
+    "test": "echo \"Tests complete\"",
+    "start": "electron ./main.js",
+    "dev": "electron ./main.js --debug"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/netblitzer/JoustingClient.git"
+  },
+  "keywords": [
+    "Electron",
+    "PIXI.js",
+    "Pixi",
+    "game",
+    "2D",
+    "jousting"
+  ],
+  "author": "Luke Miller",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/netblitzer/JoustingClient/issues"
+  },
+  "homepage": "https://github.com/netblitzer/JoustingClient#readme"
+}
