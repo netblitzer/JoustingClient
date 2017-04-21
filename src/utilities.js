@@ -1,8 +1,8 @@
 
 const timing = {
   dT: 0,
-  lastTime: 0,
-  curTime: 0,
+  lastTime: new Date().getTime(),
+  curTime: new Date().getTime(),
 };
 
 const center = {
@@ -17,8 +17,8 @@ const frameAddition = {
 };
 
 const updateTiming = () => {
-  timing.curTime = new Date.getTime();
-  timing.dT = timing.curTime - timing.lastTime;
+  timing.curTime = new Date().getTime();
+  timing.dT = (timing.curTime - timing.lastTime) * 0.001;
   timing.lastTime = timing.curTime;
 };
 

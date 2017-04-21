@@ -1,0 +1,92 @@
+const Particle = require('./Particle.js');
+
+const PIXI = require('pixi.js');
+const ParticleContainer = PIXI.particles.ParticleContainer;
+const Container = PIXI.Container;
+const loader = PIXI.loader;
+const TextureCache = PIXI.utils.TextureCache;
+
+class EmitterStream {
+  
+  constructor (_ratePS, _pos, _texture, _options) {
+    
+    this.rate = _ratePS;
+    this.texture = _texture;
+    this.alive = 0;
+    this.faded = false;
+    this.running = true;
+    
+    this.particles = [ ];
+    
+    this.pos = _pos;
+    
+    const options = (_options) ? _options : { };
+    
+    this.lifeTime = (options.hasOwnProperty('lifeTime')) ? options.lifeTime : 5;
+    this.lifeFudge = (options.hasOwnProperty('lifeFudge')) ? options.lifeFudge : 1;
+    this.velocity = (options.hasOwnProperty('emitterVel')) ? options.emitterVel : {x: 0, y: 0};
+    this.particleVelocity = (options.hasOwnProperty('particleVelocity')) ? options.particleVelocity : {x: 0, y: 0};
+    this.particlePosFudge = (options.hasOwnProperty('particlePosFudge')) ? options.particlePosFudge : {x: 2, y: 2};
+    this.particleVelocityFudge = (options.hasOwnProperty('particleVelocityFudge')) ? options.particleVelocityFudge : {x: 5, y: 5};
+    this.fade = (options.hasOwnProperty('fade')) ? options.fade : true;
+    
+    
+    this.container = new ParticleContainer(_ratePS * this.lifeTime * 2, {scale: true, position: true, rotation: false, uvs: false, alpha: true}, _ratePS * this.lifeTime * 2);
+    this.container.alpha = 1;
+    
+    this.container.interactive = false;
+    this.container.interactiveChildren = false;
+    
+    
+    this.neededTimeToNext = 1 / this.rate;
+    this.timeToNext = 0;
+  };
+  
+  update (_dT) {
+    this.alive = this.count;
+    
+    this.timeToNext += _dT;
+    
+    if (this.running) {
+      while (this.timeToNext >= this.neededTimeToNext) {
+
+        const p = new Particle( {
+          x: this.pos.x + (Math.random() - 0.5) * 2 * this.particlePosFudge.x,
+          y: this.pos.y + (Math.random() - 0.5) * 2 * this.particlePosFudge.y,
+        }, this.texture, {
+          lifeTime: this.lifeTime + Math.random() * this.lifeFudge,
+          fade: this.fade,
+          velocity: {
+            x: this.velocity.x + this.particleVelocity.x + (Math.random() - 0.5) * 2 * this.particleVelocityFudge.x,
+            y: this.velocity.y + this.particleVelocity.y + (Math.random() - 0.5) * 2 * this.particleVelocityFudge.y,
+          },
+        });
+
+        this.particles.push(p);
+
+        this.container.addChild(p.sprite);
+
+        this.timeToNext -= this.neededTimeToNext;
+      }
+    }
+    
+    this.particles.forEach((_p) => {
+      _p.update(_dT);
+    });
+    
+    this.particles = this.particles.filter((_p) => {
+      return _p.alive;
+    });
+    
+    console.dir(this.particles);
+    
+    if (this.alive < 0) {
+      this.faded = true;
+    }
+    
+    this.pos.x += this.velocity.x * _dT;
+    this.pos.y += this.velocity.y * _dT;
+  }
+}
+
+module.exports = EmitterStream;
