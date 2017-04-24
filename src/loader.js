@@ -19,6 +19,8 @@ const loadInTextures = (callback, _directory) => {
     }
   }
   
+  console.dir(files);
+  
   if (callback) {
     loader.add(files).load(callback);
   }

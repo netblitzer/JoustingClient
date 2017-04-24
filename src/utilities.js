@@ -20,6 +20,8 @@ const updateTiming = () => {
   timing.curTime = new Date().getTime();
   timing.dT = (timing.curTime - timing.lastTime) * 0.001;
   timing.lastTime = timing.curTime;
+  
+  return timing.dT;
 };
 
 const resize = () => {

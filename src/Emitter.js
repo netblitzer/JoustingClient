@@ -27,14 +27,13 @@ class Emitter {
     const options = (_options) ? _options : { };
     
     this.lifeTime = (options.hasOwnProperty('lifeTime')) ? options.lifeTime : 5;
-    this.fadeTime = (options.hasOwnProperty('fadeTime')) ? options.fadeTime : 5;
     this.lifeFudge = (options.hasOwnProperty('lifeFudge')) ? options.lifeFudge : 1;
-    this.fadeFudge = (options.hasOwnProperty('fadeFudge')) ? options.fadeFudge : 1;
+    this.alphaFudge = (options.hasOwnProperty('alphaFudge')) ? options.alphaFudge : 0.5;
     this.velocity = (options.hasOwnProperty('emitterVel')) ? options.emitterVel : {x: 0, y: 0};
     this.particleVelocity = (options.hasOwnProperty('particleVelocity')) ? options.particleVelocity : {x: 0, y: 0};
     this.particlePosFudge = (options.hasOwnProperty('particlePosFudge')) ? options.particlePosFudge : {x: 2, y: 2};
     this.particleVelocityFudge = (options.hasOwnProperty('particleVelocityFudge')) ? options.particleVelocityFudge : {x: 5, y: 5};
-    this.repeat = (options.hasOwnProperty('repeat')) ? options.repeat : false;
+    this.fade = (options.hasOwnProperty('fade')) ? options.fade : true;
     
     this.createParticles();
   };
@@ -42,21 +41,22 @@ class Emitter {
   createParticles () {
     
     for (let i = 0; i < this.count; i++) {
-      
+
       const p = new Particle( {
-        x: this.pos.x + (Math.random() - 0.5) * 2 * this.particlePosFudge.x,
-        y: this.pos.y + (Math.random() - 0.5) * 2 * this.particlePosFudge.y,
+        x: (Math.random() - 0.5) * 2 * this.particlePosFudge.x,
+        y: (Math.random() - 0.5) * 2 * this.particlePosFudge.y,
       }, this.texture, {
-        lifeTime: this.lifeTime + Math.random() * this.lifeFudge,
-        fadeTime: this.fadeTime + Math.random() * this.fadeFudge,
+        lifeTime: this.lifeTime + (Math.random() - 0.5) * 2 * this.lifeFudge,
+        fade: this.fade,
         velocity: {
           x: this.particleVelocity.x + (Math.random() - 0.5) * 2 * this.particleVelocityFudge.x,
           y: this.particleVelocity.y + (Math.random() - 0.5) * 2 * this.particleVelocityFudge.y,
         },
+        startAlpha: 1 - Math.random() * this.alphaFudge,
       });
-      
-      this.particles[i] = p;
-      
+
+      this.particles.push(p);
+
       this.container.addChild(p.sprite);
     }
   };
@@ -64,15 +64,20 @@ class Emitter {
   update (_dT) {
     this.alive = this.count;
     
-    for (let i = 0; i < this.particles.length; i++) {
-      this.particles[i].update(_dT);
-      if (!this.particles[i].alive) {
-        this.alive--;
-      }
-    }
+    this.particles.forEach((_p) => {
+      _p.update(_dT, this.pos)
+    });
     
-    if (this.alive <= 0) {
-      this.running = true;
+    this.particles = this.particles.filter((_p) => {
+      return _p.alive;
+    });
+    
+    this.container.children = this.container.children.filter((_s) => {
+      return _s.alpha > 0;
+    });
+    
+    if (this.alive < 0) {
+      this.faded = true;
     }
     
     this.pos.x += this.velocity.x * _dT;

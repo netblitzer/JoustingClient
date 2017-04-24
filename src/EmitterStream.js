@@ -24,6 +24,7 @@ class EmitterStream {
     
     this.lifeTime = (options.hasOwnProperty('lifeTime')) ? options.lifeTime : 5;
     this.lifeFudge = (options.hasOwnProperty('lifeFudge')) ? options.lifeFudge : 1;
+    this.alphaFudge = (options.hasOwnProperty('alphaFudge')) ? options.alphaFudge : 0.5;
     this.velocity = (options.hasOwnProperty('emitterVel')) ? options.emitterVel : {x: 0, y: 0};
     this.particleVelocity = (options.hasOwnProperty('particleVelocity')) ? options.particleVelocity : {x: 0, y: 0};
     this.particlePosFudge = (options.hasOwnProperty('particlePosFudge')) ? options.particlePosFudge : {x: 2, y: 2};
@@ -35,8 +36,7 @@ class EmitterStream {
     this.container.alpha = 1;
     
     this.container.interactive = false;
-    this.container.interactiveChildren = false;
-    
+    this.container.interactiveChildren = false;    
     
     this.neededTimeToNext = 1 / this.rate;
     this.timeToNext = 0;
@@ -51,15 +51,16 @@ class EmitterStream {
       while (this.timeToNext >= this.neededTimeToNext) {
 
         const p = new Particle( {
-          x: this.pos.x + (Math.random() - 0.5) * 2 * this.particlePosFudge.x,
-          y: this.pos.y + (Math.random() - 0.5) * 2 * this.particlePosFudge.y,
+          x: (Math.random() - 0.5) * 2 * this.particlePosFudge.x,
+          y: (Math.random() - 0.5) * 2 * this.particlePosFudge.y,
         }, this.texture, {
-          lifeTime: this.lifeTime + Math.random() * this.lifeFudge,
+          lifeTime: this.lifeTime + (Math.random() - 0.5) * 2 * this.lifeFudge,
           fade: this.fade,
           velocity: {
-            x: this.velocity.x + this.particleVelocity.x + (Math.random() - 0.5) * 2 * this.particleVelocityFudge.x,
-            y: this.velocity.y + this.particleVelocity.y + (Math.random() - 0.5) * 2 * this.particleVelocityFudge.y,
+            x: this.particleVelocity.x + (Math.random() - 0.5) * 2 * this.particleVelocityFudge.x,
+            y: this.particleVelocity.y + (Math.random() - 0.5) * 2 * this.particleVelocityFudge.y,
           },
+          startAlpha: 0.5 + Math.random() * this.alphaFudge,
         });
 
         this.particles.push(p);
@@ -71,14 +72,16 @@ class EmitterStream {
     }
     
     this.particles.forEach((_p) => {
-      _p.update(_dT);
+      _p.update(_dT, this.pos)
     });
     
     this.particles = this.particles.filter((_p) => {
       return _p.alive;
     });
     
-    console.dir(this.particles);
+    this.container.children = this.container.children.filter((_s) => {
+      return _s.alpha > 0;
+    });
     
     if (this.alive < 0) {
       this.faded = true;
