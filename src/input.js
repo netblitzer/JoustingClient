@@ -13,48 +13,39 @@ const keys = {
   mouse2double: false,
 };
 
-let m1last = 0;
-let m2last = 0;
-let lastClicked = '';
+// const m1last = 0;
+// const m2last = 0;
+// const lastClicked = '';
 
 
 const keyDownHandler = (e) => {
   const keyPressed = e.which;
 
-  // W OR UP
-  if(keyPressed === 87 || keyPressed === 38) {
+  if (keyPressed === 87 || keyPressed === 38) {
+    // W OR UP
     keys.up = true;
-  }
-  // A OR LEFT
-  else if(keyPressed === 65 || keyPressed === 37) {
+  } else if (keyPressed === 65 || keyPressed === 37) {
+    // A OR LEFT
     keys.left = true;
-  }
-  // S OR DOWN
-  else if(keyPressed === 83 || keyPressed === 40) {
+  } else if (keyPressed === 83 || keyPressed === 40) {
+    // S OR DOWN
     keys.down = true;
-  }
-  // D OR RIGHT
-  else if(keyPressed === 68 || keyPressed === 39) {
+  } else if (keyPressed === 68 || keyPressed === 39) {
+    // D OR RIGHT
     keys.right = true;
-  }
-  // SPACE
-  else if(keyPressed === 32) {
+  } else if (keyPressed === 32) {
+    // SPACE
     keys.space = true;
-  }
-  // SHIFT
-  else if(keyPressed === 16) {
+  } else if (keyPressed === 16) {
+    // SHIFT
     keys.shift = true;
-  }
-  // ESC
-  else if(keyPressed === 27) {
+  } else if (keyPressed === 27) {
+    // ESC
     keys.esc = true;
-  }
-  // E
-  else if(keyPressed === 69) {
+  } else if (keyPressed === 69) {
+    // E
     keys.e = true;
   }
-  
-  console.dir(keys);
 
   e.preventDefault();
 };
@@ -62,40 +53,31 @@ const keyDownHandler = (e) => {
 const keyUpHandler = (e) => {
   const keyPressed = e.which;
 
-  // W OR UP
-  if(keyPressed === 87 || keyPressed === 38) {
+  if (keyPressed === 87 || keyPressed === 38) {
+    // W OR UP
     keys.up = false;
-  }
-  // A OR LEFT
-  else if(keyPressed === 65 || keyPressed === 37) {
+  } else if (keyPressed === 65 || keyPressed === 37) {
+    // A OR LEFT
     keys.left = false;
-  }
-  // S OR DOWN
-  else if(keyPressed === 83 || keyPressed === 40) {
+  } else if (keyPressed === 83 || keyPressed === 40) {
+    // S OR DOWN
     keys.down = false;
-  }
-  // D OR RIGHT
-  else if(keyPressed === 68 || keyPressed === 39) {
+  } else if (keyPressed === 68 || keyPressed === 39) {
+    // D OR RIGHT
     keys.right = false;
-  }
-  // SPACE
-  else if(keyPressed === 32) {
+  } else if (keyPressed === 32) {
+    // SPACE
     keys.space = false;
-  }
-  // SHIFT
-  else if(keyPressed === 16) {
+  } else if (keyPressed === 16) {
+    // SHIFT
     keys.shift = false;
-  }
-  // ESC
-  else if(keyPressed === 27) {
+  } else if (keyPressed === 27) {
+    // ESC
     keys.esc = false;
-  }
-  // E
-  else if(keyPressed === 69) {
+  } else if (keyPressed === 69) {
+    // E
     keys.e = false;
   }
-  
-  console.dir(keys);
 
   e.preventDefault();
 };
@@ -108,7 +90,7 @@ const mouseUpHandler = (e) => {
 
 const mouseDownHandler = (e) => {
   keys.mouse1 = true;
-  
+
   e.preventDefault();
 };
 
