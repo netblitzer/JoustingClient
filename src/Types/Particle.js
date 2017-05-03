@@ -28,7 +28,7 @@ class Particle {
     this.alphaMod = this.startAlpha / this.lifeTime;
     
     this.alive = true;
-  }
+  };
   
   update (_dT, _pos) {
     if (this.alive) {
@@ -55,8 +55,8 @@ class Particle {
     }
     
     return this.alive;
-  }
+  };
   
-}
+};
 
 module.exports = Particle;

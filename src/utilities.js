@@ -1,3 +1,5 @@
+const renderer = require('./renderer.js');
+const PIXI = require('pixi.js');
 
 const timing = {
   dT: 0,
@@ -32,6 +34,33 @@ const resize = () => {
   
   center.x = window.innerWidth / 2;
   center.y = window.innerHeight / 2;
+  
+  
+  renderer.screenSize = {
+    w: window.innerWidth,
+    h: window.innerHeight,
+  };
+  
+  scales = {
+    x: renderer.screenSize.w / 1280,
+    x: renderer.screenSize.h / 720,
+  };
+  
+  if (scales.x > scales.y) {
+    renderer.screenScaleMod = {
+      x: 1,
+      y: 1 / scales.x,
+    };
+  } else {
+    renderer.screenScaleMod = {
+      x: 1 / scales.y,
+      y: 1,
+    };
+  }
+  
+  if (renderer.mainStage !== undefined) {
+    
+  }
 };
 
 window.addEventListener('resize', resize);

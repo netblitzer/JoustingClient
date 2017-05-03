@@ -89,7 +89,7 @@ class EmitterStream {
     
     this.pos.x += this.velocity.x * _dT;
     this.pos.y += this.velocity.y * _dT;
-  }
-}
+  };
+};
 
 module.exports = EmitterStream;
