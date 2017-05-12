@@ -1,10 +1,11 @@
 const PIXI = require('pixi.js');
+
 const Sprite = PIXI.Sprite;
 const resources = PIXI.loader.resources;
 
 class Particle {
 
-  constructor(_pos, _texture, options) {
+  constructor(_pos, _texture, _options) {
     this.pos = _pos;
 
     this.texture = _texture;
@@ -17,13 +18,15 @@ class Particle {
     this.sprite.x = _pos.x;
     this.sprite.y = _pos.y;
 
-    this.lifeTime = (options.hasOwnProperty('lifeTime')) ? options.lifeTime : 5;
-    this.fade = (options.hasOwnProperty('fade')) ? options.fade : true;
+    const options = (_options) || { };
+
+    this.lifeTime = (Object.prototype.hasOwnProperty.call(options, 'lifeTime')) ? options.lifeTime : 5;
+    this.fade = (Object.prototype.hasOwnProperty.call(options, 'fade')) ? options.fade : true;
     this.velocity =
-      (options.hasOwnProperty('velocity')) ? options.velocity : {
-        x: Math.random() * 5 - 10, y: Math.random() * 5 - 10,
+      (Object.prototype.hasOwnProperty.call(options, 'velocity')) ? options.velocity : {
+        x: (Math.random() * 5) - 10, y: (Math.random() * 5) - 10,
       };
-    this.startAlpha = (options.hasOwnProperty('startAlpha')) ? options.startAlpha : 1;
+    this.startAlpha = (Object.prototype.hasOwnProperty.call(options, 'startAlpha')) ? options.startAlpha : 1;
 
     this.alpha = this.startAlpha;
     this.life = 0;

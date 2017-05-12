@@ -1,3 +1,6 @@
+/* global window:true*/
+/* global document:true*/
+
 const renderer = require('./renderer.js');
 
 const timing = {
@@ -45,7 +48,13 @@ const resize = () => {
   // }
 };
 
-window.addEventListener('resize', resize);
+const lerp3 = (v0, v1, v2, alpha) => ((1 - alpha) * (((1 - alpha) * v0) + (alpha * v1))) +
+      ((((1 - alpha) * v1) + (v2 * alpha)) * alpha);
+
+
+const init = () => {
+  window.addEventListener('resize', resize);
+};
 
 module.exports = {
   updateTiming,
@@ -53,4 +62,6 @@ module.exports = {
   center,
   timing,
   frameAddition,
+  lerp3,
+  init,
 };

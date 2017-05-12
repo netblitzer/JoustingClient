@@ -1,4 +1,21 @@
+/* global document:true*/
+
 const keys = {
+  e: false,
+  space: false,
+  left: false,
+  right: false,
+  up: false,
+  down: false,
+  shift: false,
+  esc: false,
+  mouse1: false,
+  mouse2: false,
+  mouse1double: false,
+  mouse2double: false,
+};
+
+const lastKeys = {
   e: false,
   space: false,
   left: false,
@@ -104,5 +121,6 @@ const init = () => {
 
 module.exports = {
   init,
+  lastKeys,
   keys,
 };

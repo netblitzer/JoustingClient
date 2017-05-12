@@ -1,6 +1,6 @@
 const Particle = require('./Particle.js');
-
 const PIXI = require('pixi.js');
+
 const ParticleContainer = PIXI.particles.ParticleContainer;
 
 class Emitter {
@@ -25,19 +25,19 @@ class Emitter {
 
     const options = (_options) || { };
 
-    this.lifeTime = (options.hasOwnProperty('lifeTime')) ? options.lifeTime : 5;
-    this.lifeFudge = (options.hasOwnProperty('lifeFudge')) ? options.lifeFudge : 1;
-    this.alphaFudge = (options.hasOwnProperty('alphaFudge')) ? options.alphaFudge : 0.5;
-    this.velocity = (options.hasOwnProperty('emitterVel')) ? options.emitterVel : { x: 0, y: 0 };
+    this.lifeTime = (Object.prototype.hasOwnProperty.call(options, 'lifeTime')) ? options.lifeTime : 5;
+    this.lifeFudge = (Object.prototype.hasOwnProperty.call(options, 'lifeFudge')) ? options.lifeFudge : 1;
+    this.alphaFudge = (Object.prototype.hasOwnProperty.call(options, 'alphaFudge')) ? options.alphaFudge : 0.5;
+    this.velocity = (Object.prototype.hasOwnProperty.call(options, 'emitterVel')) ? options.emitterVel : { x: 0, y: 0 };
     this.particleVelocity =
-      (options.hasOwnProperty('particleVelocity')) ? options.particleVelocity : { x: 0, y: 0 };
+      (Object.prototype.hasOwnProperty.call(options, 'particleVelocity')) ? options.particleVelocity : { x: 0, y: 0 };
     this.particlePosFudge =
-      (options.hasOwnProperty('particlePosFudge')) ? options.particlePosFudge : { x: 2, y: 2 };
+      (Object.prototype.hasOwnProperty.call(options, 'particlePosFudge')) ? options.particlePosFudge : { x: 2, y: 2 };
     this.particleVelocityFudge =
-      (options.hasOwnProperty('particleVelocityFudge')) ? options.particleVelocityFudge : {
+      (Object.prototype.hasOwnProperty.call(options, 'particleVelocityFudge')) ? options.particleVelocityFudge : {
         x: 5, y: 5,
       };
-    this.fade = (options.hasOwnProperty('fade')) ? options.fade : true;
+    this.fade = (Object.prototype.hasOwnProperty.call(options, 'fade')) ? options.fade : true;
 
     this.createParticles();
   }
@@ -48,13 +48,13 @@ class Emitter {
         x: (Math.random() - 0.5) * 2 * this.particlePosFudge.x,
         y: (Math.random() - 0.5) * 2 * this.particlePosFudge.y,
       }, this.texture, {
-        lifeTime: this.lifeTime + (Math.random() - 0.5) * 2 * this.lifeFudge,
+        lifeTime: this.lifeTime + ((Math.random() - 0.5) * 2 * this.lifeFudge),
         fade: this.fade,
         velocity: {
-          x: this.particleVelocity.x + (Math.random() - 0.5) * 2 * this.particleVelocityFudge.x,
-          y: this.particleVelocity.y + (Math.random() - 0.5) * 2 * this.particleVelocityFudge.y,
+          x: this.particleVelocity.x + ((Math.random() - 0.5) * 2 * this.particleVelocityFudge.x),
+          y: this.particleVelocity.y + ((Math.random() - 0.5) * 2 * this.particleVelocityFudge.y),
         },
-        startAlpha: 1 - Math.random() * this.alphaFudge,
+        startAlpha: 1 - (Math.random() * this.alphaFudge),
       });
 
       this.particles.push(p);
@@ -70,9 +70,9 @@ class Emitter {
       _p.update(_dT, this.pos);
     });
 
-    this.particles = this.particles.filter((_p) => _p.alive);
+    this.particles = this.particles.filter(_p => _p.alive);
 
-    this.container.children = this.container.children.filter((_s) => _s.alpha > 0);
+    this.container.children = this.container.children.filter(_s => _s.alpha > 0);
 
     if (this.alive < 0) {
       this.faded = true;
