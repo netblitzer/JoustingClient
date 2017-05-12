@@ -17,7 +17,7 @@ function createWindow() {
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
+    pathname: path.join(__dirname, '../index.html'),
     protocol: 'file:',
     slashes: true,
     skipToolbar: true,
@@ -27,7 +27,7 @@ function createWindow() {
   mainWindow.setMenu(null);
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools({ detach: true, })
+  // mainWindow.webContents.openDevTools({ detach: true, })
 
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {

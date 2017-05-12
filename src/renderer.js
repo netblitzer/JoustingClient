@@ -5,7 +5,7 @@
 // const electron = require('electron');
 // const ipc = require('electron').ipcRenderer;
 // const BrowserWindow = require('electron').remote.BrowserWindow;
-// const remote = require('electron').remote;
+const remote = require('electron').remote;
 // const screen = electron.screen;
 const socket = require('socket.io-client')('https://joustingserver.herokuapp.com/');
 
@@ -51,6 +51,7 @@ const zoneStages = {
   arena: new Container(),
 };
 const coverStages = {
+  background: new Container(),
   menu: new Container(),
   shop: new Container(),
   arenaMenu: new Container(),
@@ -60,6 +61,7 @@ const coverStages = {
   faceoff: new Container(),
   started: new Container(),
   endMenu: new Container(),
+  exitConfirm: new Container(),
 };
 const allEmitters = [];
 
@@ -348,6 +350,7 @@ const updateLoop = () => {
             // coverStages.arenaMenu.aMenu.aiButton.interactive = true;
             coverStages.arenaMenu.aMenu.randomButton.interactive = true;
             // coverStages.arenaMenu.aMenu.rankedButton.interactive = true;
+            coverStages.arenaMenu.aMenu.exitButton.interactive = true;
 
             // coverStages.arenaMenu.aMenu.practiceButton.tint = 0xDDDDDD;
             // coverStages.arenaMenu.aMenu.aiButton.tint = 0xDDDDDD;
@@ -364,6 +367,31 @@ const updateLoop = () => {
 
           break;
 
+        case 'exitConfirm':
+          if (input.keys.esc === true) {
+            state = 'menu';
+
+            coverStages.exitConfirm.visible = false;
+
+            // coverStages.arenaMenu.aMenu.practiceButton.interactive = true;
+            // coverStages.arenaMenu.aMenu.aiButton.interactive = true;
+            coverStages.arenaMenu.aMenu.randomButton.interactive = true;
+            // coverStages.arenaMenu.aMenu.rankedButton.interactive = true;
+            coverStages.arenaMenu.aMenu.exitButton.interactive = true;
+
+            // coverStages.arenaMenu.aMenu.practiceButton.tint = 0xDDDDDD;
+            // coverStages.arenaMenu.aMenu.aiButton.tint = 0xDDDDDD;
+            coverStages.arenaMenu.aMenu.randomButton.tint = 0xDDDDDD;
+            // coverStages.arenaMenu.aMenu.rankedButton.tint = 0xDDDDDD;
+
+            // coverStages.arenaMenu.aMenu.practiceButton.text.tint = 0xCCCCCC;
+            // coverStages.arenaMenu.aMenu.aiButton.text.tint = 0xCCCCCC;
+            coverStages.arenaMenu.aMenu.randomButton.text.tint = 0xFFFFFF;
+            // coverStages.arenaMenu.aMenu.rankedButton.text.tint = 0xCCCCCC;
+          }
+
+          break;
+
         case 'userLeft':
 
           if (input.keys.esc === true) {
@@ -375,6 +403,7 @@ const updateLoop = () => {
             // coverStages.arenaMenu.aMenu.aiButton.interactive = true;
             coverStages.arenaMenu.aMenu.randomButton.interactive = true;
             // coverStages.arenaMenu.aMenu.rankedButton.interactive = true;
+            coverStages.arenaMenu.aMenu.exitButton.interactive = true;
 
             // coverStages.arenaMenu.aMenu.practiceButton.tint = 0xDDDDDD;
             // coverStages.arenaMenu.aMenu.aiButton.tint = 0xDDDDDD;
@@ -602,7 +631,7 @@ const updateLoop = () => {
   input.lastKeys = Object.assign({}, input.keys);
 
   // Render current state
-  mainStage.debugTimer.text = `dT: ${dT}`;
+  // mainStage.debugTimer.text = `dT: ${dT}`;
 
   allEmitters.forEach((_emit) => {
     _emit.update(dT);
@@ -636,24 +665,31 @@ const init = () => {
     mainStage.addChild(coverStages[keys[i]]);
   }
 
-  const timer = new Text('dT: 0', { fontFamily: 'Arial', fontSize: 20, fill: '#FFF' });
-  timer.position.x = 15;
-  timer.position.y = 15;
-
-  mainStage.addChild(timer);
-  mainStage.debugTimer = timer;
+  // const timer = new Text('dT: 0', { fontFamily: 'Arial', fontSize: 20, fill: '#FFF' });
+  // timer.position.x = 15;
+  // timer.position.y = 15;
+// 
+  // mainStage.addChild(timer);
+  // mainStage.debugTimer = timer;
 
   // set up the arena stage
   const g = new Graphics();
   g.beginFill(0xEECCAA);
-
   g.drawRect(0, screenSize.h * 0.3, screenSize.w, screenSize.h * 0.7);
 
   g.beginFill(0xCCDDFF);
-
   g.drawRect(0, 0, screenSize.w, screenSize.h * 0.3);
 
-  zoneStages.arena.addChild(g);
+  zoneStages.menu.addChild(g);
+  
+  const f = new Graphics();
+  f.beginFill(0xEECCAA);
+  f.drawRect(0, screenSize.h * 0.3, screenSize.w, screenSize.h * 0.7);
+
+  f.beginFill(0xCCDDFF);
+  f.drawRect(0, 0, screenSize.w, screenSize.h * 0.3);
+  
+  zoneStages.arena.addChild(f);
 
   const aMenu = new Graphics();
   aMenu.beginFill(0x000000);
@@ -676,6 +712,137 @@ const init = () => {
   attachButtonHandlers(exitButton);
 
   aMenu.addChild(exitButton);
+  aMenu.exitButton = exitButton;
+
+  const exitText = new Text('QUIT', {
+    fontFamily: 'Arial',
+    fontSize: 30,
+    fill: '#CCC',
+    algin: 'center',
+  });
+  exitText.anchor.set(0.5);
+  exitText.x = 1110;
+  exitText.y = 80;
+  exitText.tint = 0xCCCCCC;
+  exitButton.addChild(exitText);
+  exitButton.text = exitText;
+  
+  exitButton.on('pointerdown', () => {
+    coverStages.exitConfirm.visible = true;
+    
+    state = 'exitConfirm';
+
+    // coverStages.arenaMenu.aMenu.practiceButton.interactive = true;
+    // coverStages.arenaMenu.aMenu.aiButton.interactive = true;
+    coverStages.arenaMenu.aMenu.randomButton.interactive = false;
+    // coverStages.arenaMenu.aMenu.rankedButton.interactive = true;
+    coverStages.arenaMenu.aMenu.exitButton.interactive = false;
+
+    // coverStages.arenaMenu.aMenu.practiceButton.tint = 0xAAAAAA;
+    // coverStages.arenaMenu.aMenu.aiButton.tint = 0xAAAAAA;
+    coverStages.arenaMenu.aMenu.randomButton.tint = 0xAAAAAA;
+    // coverStages.arenaMenu.aMenu.rankedButton.tint = 0xAAAAAA;
+
+    // coverStages.arenaMenu.aMenu.practiceButton.text.tint = 0xCCCCCC;
+    // coverStages.arenaMenu.aMenu.aiButton.text.tint = 0xCCCCCC;
+    coverStages.arenaMenu.aMenu.randomButton.text.tint = 0xCCCCCC;
+    // coverStages.arenaMenu.aMenu.rankedButton.text.tint = 0xCCCCCC;
+
+    genericDown();
+  });
+
+
+  const exitConfirmMenu = new Graphics();
+  exitConfirmMenu.beginFill(0x000000);
+  exitConfirmMenu.fillAlpha = 0.5;
+  exitConfirmMenu.drawRect(0, 0, screenSize.w, screenSize.h);
+
+  exitConfirmMenu.fillAlpha = 0.95;
+  exitConfirmMenu.drawRect(center.x - 160, center.y - 100, 320, 200);
+
+  coverStages.exitConfirm.addChild(exitConfirmMenu);
+  coverStages.exitConfirm.menu = exitConfirmMenu;
+  coverStages.exitConfirm.visible = false;
+
+  const exitConfirmText = new Text('Are you sure you \n want to quit?', {
+    fontFamily: 'Arial',
+    fontSize: 36,
+    fill: '#888',
+    algin: 'center',
+  });
+  exitConfirmText.anchor.set(0.5);
+  exitConfirmText.x = center.x;
+  exitConfirmText.y = center.y - 35;
+  exitConfirmMenu.addChild(exitConfirmText);
+
+  const exitConfirmButton = new Graphics();
+  exitConfirmButton.beginFill(0xFF5555);
+  exitConfirmButton.fillAlpha = 0.95;
+  exitConfirmButton.drawRect(center.x - 160, center.y + 50, 158, 50);
+  exitConfirmButton.tint = 0xDDDDDD;
+  exitConfirmMenu.addChild(exitConfirmButton);
+
+  const exitConfirmButtonText = new Text('Quit', {
+    fontFamily: 'Arial',
+    fontSize: 36,
+    fill: '#888',
+    algin: 'center',
+  });
+  exitConfirmButtonText.anchor.set(0.5);
+  exitConfirmButtonText.x = center.x - 80;
+  exitConfirmButtonText.y = center.y + 75;
+  exitConfirmButton.addChild(exitConfirmButtonText);
+
+  exitConfirmButton.interactive = true;
+  attachButtonHandlers(exitConfirmButton);
+  exitConfirmButton.on('pointerup', () => {
+    
+    const win = remote.getCurrentWindow();
+    win.close();    
+  });
+
+  const exitCancelButton = new Graphics();
+  exitCancelButton.beginFill(0x555555);
+  exitCancelButton.fillAlpha = 0.95;
+  exitCancelButton.drawRect(center.x + 2, center.y + 50, 158, 50);
+  exitCancelButton.tint = 0xDDDDDD;
+  exitConfirmMenu.addChild(exitCancelButton);
+
+  const exitCancelButtonText = new Text('Cancel', {
+    fontFamily: 'Arial',
+    fontSize: 36,
+    fill: '#888',
+    algin: 'center',
+  });
+  exitCancelButtonText.anchor.set(0.5);
+  exitCancelButtonText.x = center.x + 80;
+  exitCancelButtonText.y = center.y + 75;
+  exitCancelButton.addChild(exitCancelButtonText);
+
+  exitCancelButton.interactive = true;
+  attachButtonHandlers(exitCancelButton);
+  exitCancelButton.on('pointerup', () => {
+    coverStages.exitConfirm.visible = false;
+    state = 'menu';
+
+    // coverStages.arenaMenu.aMenu.practiceButton.interactive = true;
+    // coverStages.arenaMenu.aMenu.aiButton.interactive = true;
+    coverStages.arenaMenu.aMenu.randomButton.interactive = true;
+    // coverStages.arenaMenu.aMenu.rankedButton.interactive = true;
+    coverStages.arenaMenu.aMenu.exitButton.interactive = true;
+
+    // coverStages.arenaMenu.aMenu.practiceButton.tint = 0xDDDDDD;
+    // coverStages.arenaMenu.aMenu.aiButton.tint = 0xDDDDDD;
+    coverStages.arenaMenu.aMenu.randomButton.tint = 0xDDDDDD;
+    // coverStages.arenaMenu.aMenu.rankedButton.tint = 0xDDDDDD;
+
+    // coverStages.arenaMenu.aMenu.practiceButton.text.tint = 0xCCCCCC;
+    // coverStages.arenaMenu.aMenu.aiButton.text.tint = 0xCCCCCC;
+    coverStages.arenaMenu.aMenu.randomButton.text.tint = 0xFFFFFF;
+    // coverStages.arenaMenu.aMenu.rankedButton.text.tint = 0xCCCCCC;
+
+    genericUp();
+  });
 
 
   const practiceButton = new Graphics();
@@ -757,6 +924,7 @@ const init = () => {
     // coverStages.arenaMenu.aMenu.aiButton.interactive = true;
     coverStages.arenaMenu.aMenu.randomButton.interactive = false;
     // coverStages.arenaMenu.aMenu.rankedButton.interactive = true;
+    coverStages.arenaMenu.aMenu.exitButton.interactive = false;
 
     // coverStages.arenaMenu.aMenu.practiceButton.tint = 0xAAAAAA;
     // coverStages.arenaMenu.aMenu.aiButton.tint = 0xAAAAAA;
@@ -869,6 +1037,7 @@ const init = () => {
     // coverStages.arenaMenu.aMenu.aiButton.interactive = true;
     coverStages.arenaMenu.aMenu.randomButton.interactive = true;
     // coverStages.arenaMenu.aMenu.rankedButton.interactive = true;
+    coverStages.arenaMenu.aMenu.exitButton.interactive = true;
 
     // coverStages.arenaMenu.aMenu.practiceButton.tint = 0xDDDDDD;
     // coverStages.arenaMenu.aMenu.aiButton.tint = 0xDDDDDD;
@@ -949,6 +1118,7 @@ const init = () => {
     // coverStages.arenaMenu.aMenu.aiButton.interactive = true;
     coverStages.arenaMenu.aMenu.randomButton.interactive = true;
     // coverStages.arenaMenu.aMenu.rankedButton.interactive = true;
+    coverStages.arenaMenu.aMenu.exitButton.interactive = true;
 
     // coverStages.arenaMenu.aMenu.practiceButton.tint = 0xDDDDDD;
     // coverStages.arenaMenu.aMenu.aiButton.tint = 0xDDDDDD;
@@ -1044,6 +1214,7 @@ const init = () => {
     // coverStages.arenaMenu.aMenu.aiButton.interactive = true;
     coverStages.arenaMenu.aMenu.randomButton.interactive = true;
     // coverStages.arenaMenu.aMenu.rankedButton.interactive = true;
+    coverStages.arenaMenu.aMenu.exitButton.interactive = true;
 
     // coverStages.arenaMenu.aMenu.practiceButton.tint = 0xDDDDDD;
     // coverStages.arenaMenu.aMenu.aiButton.tint = 0xDDDDDD;
@@ -1060,7 +1231,74 @@ const init = () => {
 
     genericDown();
   });
+  
 
+
+  const startButton = new Graphics();
+  startButton.beginFill(0x555555);
+  startButton.fillAlpha = 0.8;
+  startButton.drawRect(320, 213, 640, 142);
+  startButton.tint = 0xDDDDDD;
+
+  const startText = new Text('START', {
+    fontFamily: 'Arial',
+    fontSize: 96,
+    fill: '#EEE',
+    algin: 'center',
+  });
+  startText.anchor.set(0.5);
+  startText.x = center.x;
+  startText.y = center.y - 77;
+  startText.tint = 0xFFFFFF;
+  startButton.addChild(startText);
+  startButton.text = startText;
+
+  startButton.interactive = true;
+  attachButtonHandlers(startButton);
+  startButton.on('pointerup', () => {
+    zoneStages.menu.visible = false;
+    zoneStages.arena.visible = true;
+    coverStages.arenaMenu.visible = true;
+    
+    state = 'menu';
+
+    socket.emit('join');
+
+    genericUp();
+  });
+  
+  zoneStages.menu.addChild(startButton);
+
+
+  const quitButton = new Graphics();
+  quitButton.beginFill(0xFF5555);
+  quitButton.fillAlpha = 0.8;
+  quitButton.drawRect(320, 360, 640, 100);
+  quitButton.tint = 0xDDDDDD;
+
+  const quitText = new Text('QUIT', {
+    fontFamily: 'Arial',
+    fontSize: 90,
+    fill: '#EEE',
+    algin: 'center',
+  });
+  quitText.anchor.set(0.5);
+  quitText.x = center.x;
+  quitText.y = center.y + 50;
+  quitText.tint = 0xFFFFFF;
+  quitButton.addChild(quitText);
+  quitButton.text = quitText;
+
+  quitButton.interactive = true;
+  attachButtonHandlers(quitButton);
+  quitButton.on('pointerup', () => {
+    
+    const win = remote.getCurrentWindow();
+    win.close(); 
+  });
+  
+  zoneStages.menu.addChild(quitButton);
+  
 
   const startedText = new Text('Started', {
     fontFamily: 'Arial',
@@ -1194,8 +1432,9 @@ const init = () => {
 
   requestAnimationFrame(updateLoop);
 
-  socket.emit('join');
-  state = 'menu';
+  zoneStages.arena.visible = false;
+  coverStages.arenaMenu.visible = false;
+  state = 'startScreen';
 };
 
 
