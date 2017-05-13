@@ -16,12 +16,12 @@
   },
   "dependencies": {
     "pixi.js": "^4.5.0",
+    "electron": "^1.6.5",
     "socket.io": "^1.4.8",
     "socket.io-client": "^1.7.3",
     "glob": "^7.1.1"
   },
   "devDependencies": {
-    "electron": "^1.6.5",
     "electron-builder": "^17.5.0",
     "eslint": "^3.1.19",
     "eslint-config-airbnb": "^14.1.0",
